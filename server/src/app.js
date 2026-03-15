@@ -17,6 +17,10 @@ app.use(express.json());
 
 await connectDB();
 
+app.get("/", (_req, res) => {
+  res.json({ status: "ok", app: "GlowBeauty API" });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", app: "GlowBeauty API" });
 });
