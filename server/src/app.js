@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import connectDB from "./config/db.js";
+import connectDB, { getDbStatus } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
@@ -22,7 +22,29 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", app: "GlowBeauty API" });
+  const db = getDbStatus();
+  res.json({
+    status: db.ready ? "ok" : "degraded",
+    app: "GlowBeauty API",
+    database: db.ready ? "connected" : "disconnected",
+    databaseError: db.error
+  });
+});
+
+app.use("/api", (req, res, next) => {
+  if (req.path === "/health") {
+    return next();
+  }
+
+  const db = getDbStatus();
+  if (!db.ready) {
+    return res.status(503).json({
+      message: "Database unavailable",
+      details: db.error
+    });
+  }
+
+  return next();
 });
 
 app.use("/api/auth", authRoutes);
