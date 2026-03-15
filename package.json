@@ -1,0 +1,15 @@
+{
+  "name": "glowbeauty-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install && npm --prefix admin install",
+    "dev": "concurrently -k -n SERVER,CLIENT,ADMIN -c cyan,green,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\" \"npm --prefix admin run dev\"",
+    "build": "npm --prefix client run build && npm --prefix admin run build",
+    "start": "npm --prefix server run start",
+    "deploy:vercel": "npx vercel deploy --prod --yes --cwd server && npx vercel deploy --prod --yes --cwd client && npx vercel deploy --prod --yes --cwd admin"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
